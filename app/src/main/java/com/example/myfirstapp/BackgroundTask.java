@@ -1,7 +1,6 @@
 package com.example.myfirstapp;
 
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,13 +14,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BackgroundTask extends AsyncTask<Void, Void, Void> {
-    String data = "";
-    String dataParsed = "";
-    String singleParsed = "";
+    private static String data = "";
+    private static String dataParsed = "";
+    private static String singleParsed = "";
+    private static LinkedList<String> idList = new LinkedList<>();
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -37,40 +40,22 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
             }
 
             extractFeatureFromJson(data);
-//            JSONArray JA = new JSONArray(data);
-//            for (int i = 0; i < JA.length(); i++) {
-//                JSONObject JO = (JSONObject) JA.get(i);
-//                singleParsed = "Title:" + JO.get("webTitle") + "\n" +
-//                        "Category:" + JO.get("pillarName") + "\n";
-//
-//                dataParsed = dataParsed + singleParsed + "\n";
-//                System.out.println("JSON HERE " + JO);
 //            }
         } catch (MalformedURLException e) {
+            Log.println(Log.ERROR, "Failure.", "MalformedURLException");
             e.printStackTrace();
-        } /*catch (JSONException exception) {
-            exception.printStackTrace();
-        }*/ catch (IOException exception) {
+        } catch (IOException exception) {
+            Log.println(Log.ERROR, "Failure.", "IOException");
             exception.printStackTrace();
         }
-
         return null;
     }
 
     private void extractFeatureFromJson(String articleJSON) {
-        // If the JSON string is empty or null, then return early.
-        if (TextUtils.isEmpty(articleJSON)) {
-            //
-        }
-
         // Create an empty ArrayList that we can start adding
         List articlesList = new ArrayList<>();
 
-        // Try to parse the JSON response string. If there's a problem with the way the JSON
-        // is formatted, a JSONException exception object will be thrown.
-        // Catch the exception so the app doesn't crash, and print the error message to the logs.
         try {
-
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(articleJSON);
 
@@ -81,29 +66,26 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
             // Extract the JSONArray associated with the key called "results",
             // which represents a list of news stories.
             JSONArray articlesArray = responseJSONObject.getJSONArray("results");
+            //fast for only adding in the end of the list
 
             for (int i = 0; i < articlesArray.length(); i++) {
                 JSONObject currentArticle = articlesArray.getJSONObject(i);
                 String title = currentArticle.getString("webTitle");
+                //String pillarName = currentArticle.getString("pillarName");
 
-                // Extract the value for the key called "sectionName"
-                String pillarName = currentArticle.getString("pillarName");
+                //todo IMAGE
 
-                //Extract the JSONArray with the key "tag"
-                //JSONArray tagsArray = currentArticle.getJSONArray("tags");
+                //adding only new articles
+                if(!idList.contains(title)) {
+                    this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
+                            "Category:" + currentArticle.get("pillarName") + "\n";
 
-//                // Create a new NewsStory object with the title, section name, date,
-//                // and url from the JSON response.
-//                JSONObject article = new JSONObject(title, pillarName);
-//
-//                // Add the new NewsStory to the list of newsStories.
-//                articlesList.add(article);
-                this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
-                        "Category:" + currentArticle.get("pillarName") + "\n";
-
-                this.dataParsed = this.dataParsed + this.singleParsed + "\n";
+                    this.dataParsed = this.singleParsed + this.dataParsed + "\n";
+                    idList.add(title);
+                }
             }
         } catch (JSONException ex) {
+            Log.println(Log.ERROR, "Failure.", "JSONException");
             ex.printStackTrace();
         }
     }
@@ -112,7 +94,7 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         System.out.println("THIS PARSED " + this.dataParsed);
-        MainActivity.data.setText(this.dataParsed);
+            MainActivity.data.setText(this.dataParsed);
     }
 }
 

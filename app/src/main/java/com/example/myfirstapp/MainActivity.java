@@ -3,31 +3,34 @@ package com.example.myfirstapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity {
-    Button click;
-    public  static TextView data;
+    public static TextView data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        click = (Button) findViewById(R.id.button);
-        data = (TextView) findViewById(R.id.BackgroundTask);
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
 
-//        click.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                BackgroundTask process = new BackgroundTask();
-//                process.execute();
-//            }
-//        });
-
-        BackgroundTask process = new BackgroundTask();
-        process.execute();
+                                      @Override
+                                      public void run() {
+                                          data = (TextView) findViewById(R.id.BackgroundTask);
+                                          Log.println(Log.DEBUG, "Successfully!", "Getting articles.");
+                                          BackgroundTask process = new BackgroundTask();
+                                          process.execute();
+                                      }
+                                  },
+                0, 30000);   // 30000 Millisecond  = 30 second
 
     }
 }
