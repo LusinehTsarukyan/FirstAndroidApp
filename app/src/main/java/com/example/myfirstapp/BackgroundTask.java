@@ -14,17 +14,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 
 public class BackgroundTask extends AsyncTask<Void, Void, Void> {
     private static String data = "";
     private static String dataParsed = "";
     private static String singleParsed = "";
-    private static LinkedList<String> idList = new LinkedList<>();
+    //using HashSet, because only lookup and adding is needed on titleSet
+    private static HashSet<String> titlesSet = new HashSet<>();
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -76,12 +75,11 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
                 //todo IMAGE
 
                 //adding only new articles
-                if(!idList.contains(title)) {
+                if(titlesSet.add(title)) {
                     this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
                             "Category:" + currentArticle.get("pillarName") + "\n";
 
-                    this.dataParsed = this.singleParsed + this.dataParsed + "\n";
-                    idList.add(title);
+                    this.dataParsed = this.singleParsed + "\n" + this.dataParsed + "\n";
                 }
             }
         } catch (JSONException ex) {
