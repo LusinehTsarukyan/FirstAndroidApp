@@ -1,29 +1,41 @@
 package com.example.myfirstapp;
 
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.TextView;
+
+import androidx.core.app.NotificationCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BackgroundTask extends AsyncTask<Void, Void, Void> {
     private static String data = "";
-    private static String dataParsed = "";
+    //using LinkedList<String> for effective concat
+    private static List<String> dataParsed = new LinkedList<>();
     private static String singleParsed = "";
     //using HashSet, because only lookup and adding is needed on titleSet
     private static HashSet<String> titlesSet = new HashSet<>();
+    // private static Integer calledTimes = 0;
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -39,7 +51,6 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
             }
 
             extractFeatureFromJson(data);
-//            }
         } catch (MalformedURLException e) {
             Log.println(Log.ERROR, "Failure.", "MalformedURLException");
             e.printStackTrace();
@@ -67,6 +78,23 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
             JSONArray articlesArray = responseJSONObject.getJSONArray("results");
             //fast for only adding in the end of the list
 
+//            if (calledTimes.equals(0)) { //first time no check
+//                for (int i = 0; i < articlesArray.length(); i++) {
+//                    JSONObject currentArticle = articlesArray.getJSONObject(i);
+//                    String title = currentArticle.getString("webTitle");
+//                    //String pillarName = currentArticle.getString("pillarName");
+//
+//                    //todo IMAGE
+//
+//                    this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
+//                            "Category:" + currentArticle.get("pillarName") + "\n";
+//
+//                    this.dataParsed.add(0, singleParsed);
+//                    this.dataParsed.add(0, "\n");
+//                }
+//                calledTimes++;
+//            } else {
+            //The same article can be sent from API
             for (int i = 0; i < articlesArray.length(); i++) {
                 JSONObject currentArticle = articlesArray.getJSONObject(i);
                 String title = currentArticle.getString("webTitle");
@@ -75,13 +103,17 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
                 //todo IMAGE
 
                 //adding only new articles
-                if(titlesSet.add(title)) {
+                if (titlesSet.add(title)) {
                     this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
                             "Category:" + currentArticle.get("pillarName") + "\n";
 
-                    this.dataParsed = this.singleParsed + "\n" + this.dataParsed + "\n";
+                    this.dataParsed.add(0, singleParsed);
+                    this.dataParsed.add(0, "\n");
+                    MainActivity m = new MainActivity();
+                    m.displayNotification();
                 }
             }
+//            }
         } catch (JSONException ex) {
             Log.println(Log.ERROR, "Failure.", "JSONException");
             ex.printStackTrace();
@@ -91,8 +123,30 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        System.out.println("THIS PARSED " + this.dataParsed);
-            MainActivity.data.setText(this.dataParsed);
+        String viewData = " ";
+        for (String str : dataParsed) {
+            viewData = str + "\n" + viewData + "\n";
+        }
+        System.out.println("THIS PARSED " + viewData);
+
+        writeToFile(viewData);
+
+        MainActivity.data.setText(viewData);
+    }
+
+    private void writeToFile(String content) {
+        try {
+            File file = new File(Environment.getExternalStorageDirectory() + "/test.txt");
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.append(content);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+        }
     }
 }
 
