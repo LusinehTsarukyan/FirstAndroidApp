@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,6 +35,7 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
     //using HashSet, because only lookup and adding is needed on titleSet
     private static HashSet<String> titlesSet = new HashSet<>();
     // private static Integer calledTimes = 0;
+    public static boolean isUpdated = false;
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -109,8 +109,7 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
 
                     this.dataParsed.add(0, singleParsed);
                     this.dataParsed.add(0, "\n");
-                    MainActivity m = new MainActivity();
-                    m.displayNotification();
+                    isUpdated = true;
                 }
             }
 //            }
