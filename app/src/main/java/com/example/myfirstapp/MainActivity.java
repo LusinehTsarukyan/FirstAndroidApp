@@ -39,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
                                           Log.println(Log.DEBUG, "Successfully!", "Getting articles.");
                                           BackgroundTask process = new BackgroundTask();
                                           process.execute();
-                                          if (process.isUpdated == true) {
-                                              displayNotification();
-                                              process.isUpdated = false;
+                                          if (process.isUpdated > 0) {
+                                              displayNotification(process.isUpdated);
+                                              process.isUpdated = 0;
                                           }
                                       }
                                   },
@@ -49,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void displayNotification() {
+    public void displayNotification(int count) {
         createNotificationChannel();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setSmallIcon(R.drawable.ic_launcher_background);
-        builder.setContentTitle("New Articles Available!");
+        builder.setContentTitle(count + " new articles available!");
         builder.setContentText("Tap to open.");
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 1001, intent, 0);
         //Following will set the tap action
         builder.setContentIntent(pendingIntent);
+        builder.setAutoCancel(true);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
