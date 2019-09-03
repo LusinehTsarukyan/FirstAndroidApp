@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,17 +32,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Timer timer = new Timer();
+        //File path = getApplicationContext().getFilesDir();
         timer.scheduleAtFixedRate(new TimerTask() {
 
                                       @Override
                                       public void run() {
                                           data = (TextView) findViewById(R.id.BackgroundTask);
                                           Log.println(Log.DEBUG, "Successfully!", "Getting articles.");
-                                          BackgroundTask process = new BackgroundTask();
-                                          process.execute();
-                                          if (process.isUpdated > 0) {
-                                              displayNotification(process.isUpdated);
-                                              process.isUpdated = 0;
+                                          //show-blocks=all& for all fields, like summary, image...
+                                          BackgroundTask myTask = new BackgroundTask("https://content.guardianapis.com/search?q=article&show-blocks=all&api-key=6cb66347-dd59-4b6c-be55-731200528471");
+                                          //Testing update
+//                                          TestBackgroundTask myTask = new TestBackgroundTask("https://content.guardianapis.com/search?q=article&show-blocks=all&api-key=6cb66347-dd59-4b6c-be55-731200528471");
+//                                          myTask.testCount++;
+                                          //update test end
+
+                                          myTask.execute();
+                                          if (myTask.isUpdated > 0) {
+                                              displayNotification(myTask.isUpdated);
+                                              myTask.isUpdated = 0;
                                           }
                                       }
                                   },

@@ -1,21 +1,13 @@
 package com.example.myfirstapp;
 
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
-import android.widget.TextView;
-
-import androidx.core.app.NotificationCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,29 +20,72 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BackgroundTask extends AsyncTask<Void, Void, Void> {
-    private static String data = "";
+    private static String JSONData = "";
     //using LinkedList<String> for effective concat
     private static List<String> dataParsed = new LinkedList<>();
     private static String singleParsed = "";
     //using HashSet, because only lookup and adding is needed on titleSet
     private static HashSet<String> titlesSet = new HashSet<>();
-    // private static Integer calledTimes = 0;
     public static int isUpdated = 0;
+    private static String url = null;
+    private static boolean isItFirstTime = true;
+
+    public BackgroundTask(String url) {
+        this.url = url;
+        if (isItFirstTime) {
+            try {
+                URL url1 = new URL(url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line = "";
+                while (line != null) {
+                    line = bufferedReader.readLine();
+                    JSONData = JSONData + line;
+                }
+                // extractFeatureFromJson
+                try {
+                    JSONObject baseJsonResponse = new JSONObject(JSONData);
+                    JSONObject responseJSONObject = baseJsonResponse.getJSONObject("response");
+                    JSONArray articlesArray = responseJSONObject.getJSONArray("results");
+                    for (int i = 0; i < articlesArray.length(); i++) {
+                        JSONObject currentArticle = articlesArray.getJSONObject(i);
+                        String title = currentArticle.getString("webTitle");
+                        this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
+                                "Category:" + currentArticle.get("pillarName") + "\n";
+                        this.dataParsed.add(0, singleParsed);
+                        this.dataParsed.add(0, "\n");
+                        titlesSet.add(title); // No sense as it is checking if contains the title anyway
+                        isItFirstTime = false;
+                    }
+                } catch (JSONException ex) {
+                    Log.println(Log.ERROR, "Failure.", "JSONException");
+                    ex.printStackTrace();
+                }
+
+            } catch (MalformedURLException e) {
+                Log.println(Log.ERROR, "Failure.", "MalformedURLException");
+                e.printStackTrace();
+            } catch (IOException exception) {
+                Log.println(Log.ERROR, "Failure.", "IOException");
+                exception.printStackTrace();
+            }
+        }
+    }
 
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            URL url = new URL("https://content.guardianapis.com/search?q=article&api-key=6cb66347-dd59-4b6c-be55-731200528471");
+            URL url = new URL(this.url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String line = "";
             while (line != null) {
                 line = bufferedReader.readLine();
-                data = data + line;
+                JSONData = JSONData + line;
             }
-
-            extractFeatureFromJson(data);
+            extractFeatureFromJson(JSONData);
         } catch (MalformedURLException e) {
             Log.println(Log.ERROR, "Failure.", "MalformedURLException");
             e.printStackTrace();
@@ -62,9 +97,6 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void extractFeatureFromJson(String articleJSON) {
-        // Create an empty ArrayList that we can start adding
-        List articlesList = new ArrayList<>();
-
         try {
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(articleJSON);
@@ -76,25 +108,7 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
             // Extract the JSONArray associated with the key called "results",
             // which represents a list of news stories.
             JSONArray articlesArray = responseJSONObject.getJSONArray("results");
-            //fast for only adding in the end of the list
 
-//            if (calledTimes.equals(0)) { //first time no check
-//                for (int i = 0; i < articlesArray.length(); i++) {
-//                    JSONObject currentArticle = articlesArray.getJSONObject(i);
-//                    String title = currentArticle.getString("webTitle");
-//                    //String pillarName = currentArticle.getString("pillarName");
-//
-//                    //todo IMAGE
-//
-//                    this.singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
-//                            "Category:" + currentArticle.get("pillarName") + "\n";
-//
-//                    this.dataParsed.add(0, singleParsed);
-//                    this.dataParsed.add(0, "\n");
-//                }
-//                calledTimes++;
-//            } else {
-            //The same article can be sent from API
             for (int i = 0; i < articlesArray.length(); i++) {
                 JSONObject currentArticle = articlesArray.getJSONObject(i);
                 String title = currentArticle.getString("webTitle");
@@ -112,7 +126,6 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
                     isUpdated++;
                 }
             }
-//            }
         } catch (JSONException ex) {
             Log.println(Log.ERROR, "Failure.", "JSONException");
             ex.printStackTrace();
@@ -128,24 +141,7 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
         }
         System.out.println("THIS PARSED " + viewData);
 
-        writeToFile(viewData);
-
         MainActivity.data.setText(viewData);
-    }
-
-    private void writeToFile(String content) {
-        try {
-            File file = new File(Environment.getExternalStorageDirectory() + "/test.txt");
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter writer = new FileWriter(file);
-            writer.append(content);
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-        }
     }
 }
 
