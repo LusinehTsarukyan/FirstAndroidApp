@@ -1,6 +1,7 @@
 package com.example.myfirstapp;
 
 import android.app.Activity;
+import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,9 +14,12 @@ import java.util.List;
 public class ArticlesKeeper {
     private HashSet<String> titlesSet = new HashSet<>();
     private List<String> dataParsed = new LinkedList<>();
-    //public static NotificationManager notificationManager = new NotificationManager();
-    private static Integer isUpdated = 0;
+    public static NotificationManager notificationManager = null;
+    public static Integer isUpdated = 0;
 
+    ArticlesKeeper(Context context){
+        notificationManager = new NotificationManager(context);
+    }
 
     public void update(String jsonData) {
         try {
@@ -33,8 +37,6 @@ public class ArticlesKeeper {
             for (int i = 0; i < articlesArray.length(); i++) {
                 JSONObject currentArticle = articlesArray.getJSONObject(i);
                 String title = currentArticle.getString("webTitle");
-                //String img = currentArticle.getString("image");
-                //String pillarName = currentArticle.getString("pillarName");
 
                 //todo IMAGE
 
@@ -46,7 +48,7 @@ public class ArticlesKeeper {
 
                     this.dataParsed.add(0, singleParsed);
                     this.dataParsed.add(0, "\n");
-                    isUpdated++;
+                    this.isUpdated++;
                 }
             }
 
@@ -57,6 +59,10 @@ public class ArticlesKeeper {
             System.out.println("THIS PARSED " + viewData);
 
             MainActivity.data.setText(viewData);
+            if(isUpdated > 0){
+                notificationManager.displayNotification(isUpdated);
+                isUpdated = 0;
+            }
 
             //todo
 //            if (this.isUpdated > 0) {

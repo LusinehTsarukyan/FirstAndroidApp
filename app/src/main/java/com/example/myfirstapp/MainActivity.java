@@ -6,7 +6,9 @@ import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -20,6 +22,8 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MainActivity extends AppCompatActivity {
     public static TextView data;
@@ -29,10 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageView iv = (ImageView)findViewById(R.drawable.mayi);
-        iv.setImageResource(R.drawable.mayi);
 
-        articlesKeeper = new ArticlesKeeper();
+        articlesKeeper = new ArticlesKeeper(this);
         data = (TextView) findViewById(R.id.BackgroundTask);
 
         final String urlString = "https://content.guardianapis.com/search?q=article&show-elements=image&show-blocks=all&api-key=6cb66347-dd59-4b6c-be55-731200528471";
@@ -42,11 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
                                       @Override
                                       public void run() {
-                                          new RequestJsonTask(articlesKeeper).execute(urlString);
+                                          //new RequestJsonTask(articlesKeeper).execute(urlString);
                                           //testing update
-//                                          TestJsonTask task = new TestJsonTask(articlesKeeper);
-//                                          task.execute();
-//                                          task.testCount++;
+                                          TestJsonTask task = new TestJsonTask(articlesKeeper);
+                                          task.execute();
+                                          task.testCount++;
                                           //test end
                                       }
                                   },
