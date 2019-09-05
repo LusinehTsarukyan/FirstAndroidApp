@@ -1,12 +1,6 @@
 package com.example.myfirstapp;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,12 +9,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.example.myfirstapp.MainActivity.data;
 
 public class RequestJsonTask extends AsyncTask<String, Void, String> {
     private ArticlesKeeper articlesKeeper = null;

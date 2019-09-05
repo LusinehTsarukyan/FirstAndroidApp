@@ -1,7 +1,14 @@
 package com.example.myfirstapp;
 
-import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,13 +18,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ArticlesKeeper {
+public class ArticlesKeeper{
     private HashSet<String> titlesSet = new HashSet<>();
-    private List<String> dataParsed = new LinkedList<>();
+    private List<Article> articleList = new LinkedList<>();
     public static NotificationManager notificationManager = null;
     public static Integer isUpdated = 0;
 
-    ArticlesKeeper(Context context){
+    ArticlesKeeper(Context context) {
         notificationManager = new NotificationManager(context);
     }
 
@@ -33,6 +40,7 @@ public class ArticlesKeeper {
             // which represents a list of news stories.
             JSONArray articlesArray = responseJSONObject.getJSONArray("results");
 
+            String viewData = " ";
             for (int i = 0; i < articlesArray.length(); i++) {
                 Article currentArticle = new Article(articlesArray.getJSONObject(i));
                 //todo IMAGE
@@ -40,23 +48,19 @@ public class ArticlesKeeper {
                 String singleParsed = "";
                 //adding only new articles
                 if (titlesSet.add(currentArticle.getTitle())) {
-                    singleParsed = "Title:" + currentArticle.getTitle() + "\n" +
+                    //adding all unique articles to the list
+                    this.articleList.add(0, currentArticle);
+                    viewData = viewData + "\n" + "Title:" + currentArticle.getTitle() + "\n" +
                             "Category:" + currentArticle.getPillarName() + "\n";
 
-                    this.dataParsed.add(0, singleParsed);
-                    this.dataParsed.add(0, "\n");
+                    //rendering part
+                    MainActivity.titleData.setText(currentArticle.getTitle());
+                    MainActivity.pillarData.setText("Category: " + currentArticle.getPillarName());
+                    //MainActivity.imageData.setImageURI(Uri.parse(currentArticle.getImg()));
                     this.isUpdated++;
                 }
             }
-
-            String viewData = " ";
-            for (String str : dataParsed) {
-                viewData = viewData + "\n" + str + "\n";
-            }
-            System.out.println("THIS PARSED " + viewData);
-
-            MainActivity.data.setText(viewData);
-            if(isUpdated > 0){
+            if (isUpdated > 0) {
                 notificationManager.displayNotification(isUpdated);
                 isUpdated = 0;
             }
