@@ -1,6 +1,7 @@
 package com.example.myfirstapp;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class ArticlesKeeper{
                     //rendering part
                     MainActivity.titleData.setText(currentArticle.getTitle());
                     MainActivity.pillarData.setText("Category: " + currentArticle.getPillarName());
+                    //MainActivity.imageData.setImageURI(Uri.parse(currentArticle.getImg()));
                     this.isUpdated++;
                 }
             }

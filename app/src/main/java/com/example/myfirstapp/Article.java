@@ -1,5 +1,7 @@
 package com.example.myfirstapp;
 
+import android.net.Uri;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,5 +30,9 @@ public class Article {
 
     public String getPillarName() {
         return pillarName;
+    }
+
+    public String getImg() {
+        return img;
     }
 }
