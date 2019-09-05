@@ -24,7 +24,6 @@ public class NotificationManager extends AppCompatActivity {
         createNotificationChannel();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
         builder.setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(count + " new articles available!")
                 .setContentText("Tap to open.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
@@ -35,6 +34,12 @@ public class NotificationManager extends AppCompatActivity {
                         500,
                         500
                 });
+        if (count > 1){
+            builder.setContentTitle("See " + count + " newest articles!");
+
+        }else if(count == 1){
+            builder.setContentTitle("New article available!");
+        }
 
         //This intent will be fired when the notification is tapped
         Intent intent = new Intent(context, NotificationManager.class);

@@ -28,23 +28,20 @@ public class ArticlesKeeper {
 
             //Create the JSONObject with the key "response"
             JSONObject responseJSONObject = baseJsonResponse.getJSONObject("response");
-            //JSONObject responseJSONObject = baseJsonResponse.getJSONObject("response");
 
             // Extract the JSONArray associated with the key called "results",
             // which represents a list of news stories.
             JSONArray articlesArray = responseJSONObject.getJSONArray("results");
 
             for (int i = 0; i < articlesArray.length(); i++) {
-                JSONObject currentArticle = articlesArray.getJSONObject(i);
-                String title = currentArticle.getString("webTitle");
-
+                Article currentArticle = new Article(articlesArray.getJSONObject(i));
                 //todo IMAGE
 
                 String singleParsed = "";
                 //adding only new articles
-                if (titlesSet.add(title)) {
-                    singleParsed = "Title:" + currentArticle.get("webTitle") + "\n" +
-                            "Category:" + currentArticle.get("pillarName") + "\n";
+                if (titlesSet.add(currentArticle.getTitle())) {
+                    singleParsed = "Title:" + currentArticle.getTitle() + "\n" +
+                            "Category:" + currentArticle.getPillarName() + "\n";
 
                     this.dataParsed.add(0, singleParsed);
                     this.dataParsed.add(0, "\n");
@@ -63,12 +60,6 @@ public class ArticlesKeeper {
                 notificationManager.displayNotification(isUpdated);
                 isUpdated = 0;
             }
-
-            //todo
-//            if (this.isUpdated > 0) {
-//                notificationManager.displayNotification(this.isUpdated);
-//                this.isUpdated = 0;
-//            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
