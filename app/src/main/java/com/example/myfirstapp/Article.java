@@ -1,7 +1,5 @@
 package com.example.myfirstapp;
 
-import android.net.Uri;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +20,8 @@ public class Article {
                 .getJSONArray("assets")
                 .getJSONObject(0)
                 .getString("file"));
+
+        System.out.println(img);
     }
 
     public String getTitle() {

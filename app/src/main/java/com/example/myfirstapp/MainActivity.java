@@ -5,7 +5,6 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,11 +50,6 @@ public class MainActivity extends AppCompatActivity {
                                       @Override
                                       public void run() {
                                           new RequestJsonTask(articlesKeeper).execute(urlString);
-                                          //testing update
-//                                          TestJsonTask task = new TestJsonTask(articlesKeeper);
-//                                          task.execute();
-//                                          task.testCount++;
-                                          //test end
                                       }
                                   },
                 0, 10000);   // 30000 Millisecond  = 30 second
