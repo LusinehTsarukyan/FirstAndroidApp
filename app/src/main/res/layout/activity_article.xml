@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ArticleActivity">
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
     <ImageView
         android:id="@+id/img_activity_2"
+        android:layout_width="500dp"
+        android:layout_height="200dp" />
+
+    <TextView
+        android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:scaleType="centerCrop"/>
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:layout_below="@+id/img_activity_2"
+        android:textSize="26sp" />
 
     <TextView
         android:id="@+id/summary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="222dp"
-        android:hint="L O A D I N G . . ."
-        android:textSize="15sp" />
-
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:layout_below="@+id/title"
+        android:textSize="18sp" />
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

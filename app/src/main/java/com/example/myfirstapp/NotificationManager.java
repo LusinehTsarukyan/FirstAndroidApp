@@ -44,14 +44,13 @@ public class NotificationManager extends AppCompatActivity {
             }
 
             //This intent will be fired when the notification is tapped
-            Intent intent = new Intent(context, NotificationManager.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 1001, intent, 0);
+//            Intent intent = new Intent(context, MainActivity.class);
+//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 1001, intent, 0);
             //Following will set the tap action
-            builder.setContentIntent(pendingIntent);
-            builder.setAutoCancel(true);
-
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
+//            builder.setContentIntent(pendingIntent);
+//            builder.setAutoCancel(true);
+//            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+//            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
         }else {
             isFirstTime = false;
         }

@@ -1,5 +1,6 @@
 package com.example.myfirstapp;
 
+import android.app.Activity;
 import android.content.Context;
 
 import org.json.JSONArray;
@@ -18,10 +19,10 @@ public class ArticlesKeeper {
     public Context context;
     public MyRecyclerViewAdapter adapter;
 
-    ArticlesKeeper(Context context) {
+    ArticlesKeeper(Activity activity) {
         notificationManager = new NotificationManager(context);
         this.context = context;
-        adapter = new MyRecyclerViewAdapter(context, articleList);
+        adapter = new MyRecyclerViewAdapter(activity, articleList);
     }
 
     public void update(String jsonData) {

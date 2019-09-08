@@ -3,6 +3,8 @@ package com.example.myfirstapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,11 +21,21 @@ public class ArticleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
-
         contexManager.setArticleContext(this);
 
-        imageData = (ImageView) findViewById(R.id.img_activity_2);
+        imageData = findViewById(R.id.img_activity_2);
         summary = findViewById(R.id.summary);
-        setTitle(String.valueOf(title));
+        title = findViewById(R.id.title);
+
+        Intent intent = getIntent();
+        Bitmap bitmap = intent.getParcelableExtra("imagedata");
+        imageData.setImageBitmap(bitmap);
+
+        String mTitle = intent.getStringExtra("title");
+        getSupportActionBar().setTitle(mTitle);
+        title.setText(mTitle);
+
+        String mSummary = intent.getStringExtra("summary");
+        summary.setText(mSummary);
     }
 }

@@ -1,16 +1,11 @@
 package com.example.myfirstapp;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,11 +17,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private List<Article> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    Activity mcontext;
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, List<Article> data) {
+    MyRecyclerViewAdapter(Activity context, List<Article> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.mcontext = context;
     }
 
     public void addItemsToList(Article item){
@@ -43,18 +40,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Article article = mData.get(position);
+        Article article = mData.get(position);
         holder.title.setText(article.getTitle());
         holder.pillar.setText(article.getPillarName());
+        holder.summary.setText(article.getSummary());
         Glide.with(ContexManager.getMainContext()).load(article.getImg()).into(holder.imageView);
-        ViewCompat.setTransitionName(holder.imageView, "transitionName" + position);
-
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mClickListener.onItemClick(holder.getAdapterPosition(), article, holder.imageView);
-//            }
-//        });
     }
 
     // total number of rows
@@ -69,24 +59,22 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         TextView title;
         TextView pillar;
         ImageView imageView;
+        TextView summary;
 
         ViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.Title);
             imageView = itemView.findViewById(R.id.img_activity_1);
             pillar = itemView.findViewById(R.id.Pillar);
+            summary = itemView.findViewById(R.id.summary);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-
-            Intent intent = new Intent(ContexManager.getMainContext(), ArticleActivity.class);
-            ActivityOptionsCompat option = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) ContexManager.getMainContext(), imageView, ViewCompat.getTransitionName(view));
-            ContexManager.getMainContext().startActivity(intent, option.toBundle());
-            Glide.with(ContexManager.getMainContext()).load(imageView).into(ArticleActivity.imageData);
-            ArticleActivity.title.setText((CharSequence) title);
+            if (mClickListener != null) {
+                mClickListener.onItemClick(view, getAdapterPosition());
+            }
         }
     }
 

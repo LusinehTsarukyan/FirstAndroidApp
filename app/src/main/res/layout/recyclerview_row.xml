@@ -29,4 +29,9 @@
         android:hint="Category"
         android:textSize="13sp" />
 
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/summary"/>
+
 </RelativeLayout>

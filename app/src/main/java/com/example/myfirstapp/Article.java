@@ -30,7 +30,6 @@ public class Article {
         }
 
         summary = blocks.getJSONArray("body").getJSONObject(0).getString("bodyTextSummary");
-
     }
 
     public String getTitle() {
