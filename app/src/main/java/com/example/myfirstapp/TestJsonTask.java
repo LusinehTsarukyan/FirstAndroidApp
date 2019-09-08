@@ -3,11 +3,11 @@ package com.example.myfirstapp;
 import android.os.AsyncTask;
 
 public class TestJsonTask  extends AsyncTask<String, Void, String> {
-    private ArticlesKeeper articlesKeeper = null;
+    private ArticlesManager articlesManager = null;
     public static int testCount = 0;
 
-    public TestJsonTask(ArticlesKeeper artKpr) {
-        articlesKeeper = artKpr;
+    public TestJsonTask(ArticlesManager artKpr) {
+        articlesManager = artKpr;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class TestJsonTask  extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String wholeJson) {
-        this.articlesKeeper.update(wholeJson);
+        this.articlesManager.update(wholeJson);
     }
 }
 
