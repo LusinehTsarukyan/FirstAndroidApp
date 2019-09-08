@@ -14,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat;
 public class NotificationManager extends AppCompatActivity {
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
-    private Context context = null;
+    private Context context;
     private static boolean isFirstTime = true;
 
     NotificationManager(Context context) {

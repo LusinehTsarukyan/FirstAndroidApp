@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class RequestJsonTask extends AsyncTask<String, Void, String> {
-    private ArticlesKeeper articlesKeeper = null;
+    private ArticlesKeeper articlesKeeper;
 
     public RequestJsonTask(ArticlesKeeper artKpr) {
         articlesKeeper = artKpr;

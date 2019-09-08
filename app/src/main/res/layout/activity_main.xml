@@ -6,62 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pinnedArticles"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="Pinned elements here!" />
-    />
+        android:layout_height="131dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"/>
 
-
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/articles"
         android:layout_width="match_parent"
-        android:layout_height="680dp"
-        android:layout_marginTop="150dp"
-        android:fillViewport="true">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/Title"
-                android:layout_width="291dp"
-                android:layout_height="443dp"
-                android:layout_marginStart="120dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="35dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:hint="L O A D I N G . . ."
-                android:textSize="17sp" />
-
-            <ImageView
-                android:id="@+id/img_activity_1"
-                android:layout_width="110dp"
-                android:layout_height="160dp"
-                android:layout_marginLeft="4dp"
-                android:src="@drawable/mayi"
-                android:transitionName="img_transition" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/Pillar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="120dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="105dp"
-                android:hint="Category"
-                android:textSize="13sp" />
-        </RelativeLayout>
-
-    </ScrollView>
-
+        android:layout_height="453dp"
+        android:layout_marginTop="150dp"/>
 
 </RelativeLayout>

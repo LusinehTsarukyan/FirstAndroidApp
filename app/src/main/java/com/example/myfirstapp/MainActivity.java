@@ -1,48 +1,38 @@
 package com.example.myfirstapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
-    public static TextView titleData;
-    public static TextView pillarData;
-    public static ImageView imageData;
+public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
     public static ArticlesKeeper articlesKeeper = null;
     private final String apiKey = "6cb66347-dd59-4b6c-be55-731200528471";
+    private MyRecyclerViewAdapter adapter;
+    ContexManager contexManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageData = (ImageView) findViewById(R.id.img_activity_1);
-        imageData.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                ActivityOptionsCompat option = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, imageData, ViewCompat.getTransitionName(imageData));
-                startActivity(intent, option.toBundle());
-            }
-
-        });
-
+        contexManager.setMainContext(this);
         articlesKeeper = new ArticlesKeeper(this);
-        titleData = (TextView) findViewById(R.id.Title);
-        pillarData = (TextView) findViewById(R.id.Pillar);
 
+        final String urlString = "https://content.guardianapis.com/search?q=article&show-blocks=all&api-key=" + apiKey;
+        new RequestJsonTask(articlesKeeper).execute(urlString);
 
-        final String urlString = "https://content.guardianapis.com/search?q=article&show-blocks=all&api-key=" + apiKey; // + "&show-fields=thumbnail";
+        // set up the RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.articles);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = articlesKeeper.adapter;
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -53,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
                                       }
                                   },
                 0, 10000);   // 30000 Millisecond  = 30 second
-
     }
+
+    @Override
+    public void onItemClick(View view, int position) {}
 }
 
