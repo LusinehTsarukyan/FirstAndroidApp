@@ -11,18 +11,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class RequestJsonTask extends AsyncTask<String, Void, String> {
-    private ArticlesKeeper articlesKeeper;
+    private ArticlesManager articlesManager;
 
-    public RequestJsonTask(ArticlesKeeper artKpr) {
-        articlesKeeper = artKpr;
+    public RequestJsonTask(ArticlesManager artKpr) {
+        articlesManager = artKpr;
     }
 
     @Override
     protected String doInBackground(String... source) {
+        return getJSONString(source[0]);
+    }
+
+    public static String getJSONString(String path) {
         String wholeJson = "";
 
         try {
-            URL url = new URL(source[0]);
+            URL url = new URL(path);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -42,6 +46,6 @@ public class RequestJsonTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String wholeJson) {
-        this.articlesKeeper.update(wholeJson);
+        this.articlesManager.update(wholeJson);
     }
 }

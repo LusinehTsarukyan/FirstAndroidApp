@@ -3,9 +3,12 @@ package com.example.myfirstapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +19,7 @@ public class ArticleActivity extends AppCompatActivity {
     public static TextView title;
     public static TextView summary;
     ContexManager contexManager;
+    HorizontalRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,5 +41,9 @@ public class ArticleActivity extends AppCompatActivity {
 
         String mSummary = intent.getStringExtra("summary");
         summary.setText(mSummary);
+    }
+
+    public void addItemsToList(View view) {
+//        adapter.addItemsToList();
     }
 }

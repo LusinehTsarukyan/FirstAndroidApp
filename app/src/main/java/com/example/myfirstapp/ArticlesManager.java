@@ -8,21 +8,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
-public class ArticlesKeeper {
-    private HashSet<String> titlesSet = new HashSet<>();
-    public List<Article> articleList = new LinkedList<>();
-    public static NotificationManager notificationManager = null;
+public class ArticlesManager {
+    private HashSet<String> titlesSet = new HashSet<>(); //todo ID
+    public  NotificationManager notificationManager;
     public static Integer isUpdated = 0;
-    public Context context;
-    public MyRecyclerViewAdapter adapter;
+    public RecyclerViewAdapter adapter;
+    public HorizontalRecyclerViewAdapter horizontalRecyclerViewAdapter;
 
-    ArticlesKeeper(Activity activity) {
-        notificationManager = new NotificationManager(context);
-        this.context = context;
-        adapter = new MyRecyclerViewAdapter(activity, articleList);
+    ArticlesManager(Activity activity) {
+        this.notificationManager = new NotificationManager();
+        this.adapter = new RecyclerViewAdapter(activity);
+        this.horizontalRecyclerViewAdapter = new HorizontalRecyclerViewAdapter(activity);
     }
 
     public void update(String jsonData) {
@@ -36,12 +33,14 @@ public class ArticlesKeeper {
                 //adding only new articles
                 if (titlesSet.add(currentArticle.getTitle())) {
                     adapter.addItemsToList(currentArticle);
+                    horizontalRecyclerViewAdapter.addItemsToList(currentArticle);
                     this.isUpdated++;
                 }
             }
             if (isUpdated > 0) {
                 notificationManager.displayNotification(isUpdated);
                 adapter.notifyDataSetChanged();
+                horizontalRecyclerViewAdapter.notifyDataSetChanged();
                 isUpdated = 0;
             }
         } catch (JSONException e) {

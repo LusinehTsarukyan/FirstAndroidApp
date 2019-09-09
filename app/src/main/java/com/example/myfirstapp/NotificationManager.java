@@ -1,11 +1,12 @@
 package com.example.myfirstapp;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -14,17 +15,12 @@ import androidx.core.app.NotificationManagerCompat;
 public class NotificationManager extends AppCompatActivity {
     private final String CHANNEL_ID = "personal_notifications";
     private final int NOTIFICATION_ID = 001;
-    private Context context;
     private static boolean isFirstTime = true;
-
-    NotificationManager(Context context) {
-        this.context = context;
-    }
 
     public void displayNotification(int count) {
         if (!isFirstTime) {
             createNotificationChannel();
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(ContexManager.getMainContext(), "default");
             builder.setSmallIcon(R.drawable.ic_launcher_background)
                     .setContentText("Tap to open.")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -43,14 +39,15 @@ public class NotificationManager extends AppCompatActivity {
                 builder.setContentTitle("New article available!");
             }
 
-            //This intent will be fired when the notification is tapped
-//            Intent intent = new Intent(context, MainActivity.class);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 1001, intent, 0);
-            //Following will set the tap action
+            //todo
+//            This intent will be fired when the notification is tapped
+//            Intent intent = new Intent(ContexManager.getMainContext(), MainActivity.class);
+//            PendingIntent pendingIntent = PendingIntent.getActivity(ContexManager.getMainContext(), 1001, intent, 0);
+//            Following will set the tap action
 //            builder.setContentIntent(pendingIntent);
 //            builder.setAutoCancel(true);
-//            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-//            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(ContexManager.getMainContext());
+            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build());
         }else {
             isFirstTime = false;
         }
@@ -65,7 +62,6 @@ public class NotificationManager extends AppCompatActivity {
             NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
 
             notificationChannel.setDescription(description);
-
         }
     }
 }
