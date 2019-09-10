@@ -70,9 +70,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = findViewById(R.id.articles);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int firstItemVisible = linearLayoutManager.findFirstVisibleItemPosition();
+                if (firstItemVisible != 0 && firstItemVisible % articlesManager.adapter.articleList.size() == 0) {
+                    recyclerView.getLayoutManager().scrollToPosition(0);
+                }
+            }
+        });
 
         articlesManager.adapter.setClickListener(new RecyclerViewAdapter.ItemClickListener() {
             @Override

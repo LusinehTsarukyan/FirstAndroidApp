@@ -16,7 +16,7 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private List<Article> articleList;
+    public List<Article> articleList;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
@@ -40,7 +40,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Article article = articleList.get(position);
+        Article article = articleList.get(position % articleList.size());
         holder.article = article;
         holder.title.setText(article.getTitle());
         holder.pillar.setText(article.getPillarName());
@@ -50,7 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     // total number of rows
     @Override
     public int getItemCount() {
-        return articleList.size();
+        return articleList == null ? 0 : articleList.size() * 2;
     }
 
 
