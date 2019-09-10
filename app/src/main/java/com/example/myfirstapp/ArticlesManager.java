@@ -15,7 +15,7 @@ public class ArticlesManager {
     public Integer isUpdated = 0;
     public RecyclerViewAdapter adapter;
     public static HorizontalRecyclerViewAdapter horizontalRecyclerViewAdapter;
-    private int test = 0;
+//    private int test = 0;
 
     ArticlesManager(Activity activity) {
         this.notificationManager = new NotificationManager();
@@ -40,17 +40,17 @@ public class ArticlesManager {
                     this.isUpdated++;
                 }
 
-                    Article testArticle = new Article();
-                    adapter.addItemsToList(testArticle);
-                    if (test == 1){
-                        isUpdated++;
-                    }
+//                    Article testArticle = new Article();
+//                    adapter.addItemsToList(testArticle);
+//                    if (test == 1){
+//                        isUpdated++;
+//                    }
             }
             if (isUpdated > 0) {
                 notificationManager.displayNotification(isUpdated);
                 adapter.notifyDataSetChanged();
                 isUpdated = 0;
-                test++;
+//                test++;
             }
         } catch (JSONException e) {
             e.printStackTrace();

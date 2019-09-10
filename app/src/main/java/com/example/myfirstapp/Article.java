@@ -12,7 +12,7 @@ public class Article {
     private String img = "https://fbinstantarticles.files.wordpress.com/2016/05/screen_monetization_mobile.jpg";
     private String summary = null;
     private String apiURL;
-    static int test = 0;
+//    static int test = 0;
 
     Article(JSONObject jsonObject) throws JSONException {
         this.jsonObject = jsonObject;
@@ -38,13 +38,13 @@ public class Article {
         this.apiURL = jsonObject.getString("apiUrl") + "?" + "&show-blocks=all&api-key=" + MainActivity.apiKey;
     }
 
-    public Article(){
-        this.id = "1";
-        this.summary = "Testing new article update.";
-        this.title = "Test!" + test;
-         test++;
-        this.img = "https://fbinstantarticles.files.wordpress.com/2016/05/screen_monetization_mobile.jpg";
-    }
+//    public Article(){
+//        this.id = "1";
+//        this.summary = "Testing new article update.";
+//        this.title = "Test!" + test;
+//         test++;
+//        this.img = "https://fbinstantarticles.files.wordpress.com/2016/05/screen_monetization_mobile.jpg";
+//    }
 
     public String getId() {return id;}
 
