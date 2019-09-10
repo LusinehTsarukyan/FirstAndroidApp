@@ -2,24 +2,21 @@ package com.example.myfirstapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import org.json.JSONArray;
 
 public class ArticleActivity extends AppCompatActivity {
     public static ImageView imageData;
     public static TextView title;
     public static TextView summary;
     ContexManager contexManager;
-    HorizontalRecyclerViewAdapter adapter;
+    Article currentArticle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +38,15 @@ public class ArticleActivity extends AppCompatActivity {
 
         String mSummary = intent.getStringExtra("summary");
         summary.setText(mSummary);
+
+        String id = intent.getStringExtra("id");
+        currentArticle = ArticlesManager.getArticleMap().get(id);
     }
 
     public void addItemsToList(View view) {
-//        adapter.addItemsToList();
+        if(!ArticlesManager.horizontalRecyclerViewAdapter.pinnedArticles.contains(currentArticle)) {
+            ArticlesManager.horizontalRecyclerViewAdapter.addItemsToList(currentArticle);
+            ArticlesManager.horizontalRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 }

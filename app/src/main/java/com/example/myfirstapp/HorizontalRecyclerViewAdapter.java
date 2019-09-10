@@ -17,7 +17,7 @@ import java.util.List;
 
 public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<HorizontalRecyclerViewAdapter.ViewHolder> {
 
-    private List<Article> pinnedArticles;
+    public List<Article> pinnedArticles;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
@@ -28,7 +28,7 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
     }
 
     public void addItemsToList(Article item){
-        this.pinnedArticles.add(0, item); //todo trying
+        this.pinnedArticles.add(0, item);
     }
 
     // inflates the row layout from xml when needed

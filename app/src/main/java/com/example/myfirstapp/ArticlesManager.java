@@ -1,26 +1,29 @@
 package com.example.myfirstapp;
 
 import android.app.Activity;
-import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class ArticlesManager {
-    private HashSet<String> titlesSet = new HashSet<>(); //todo ID
-    public  NotificationManager notificationManager;
-    public static Integer isUpdated = 0;
+    //using HashMap for fast lookup and part of solution of pinned articles view
+    private static HashMap<String, Article> articleMap = new HashMap<>();
+    public NotificationManager notificationManager;
+    public Integer isUpdated = 0;
     public RecyclerViewAdapter adapter;
-    public HorizontalRecyclerViewAdapter horizontalRecyclerViewAdapter;
+    public static HorizontalRecyclerViewAdapter horizontalRecyclerViewAdapter;
+    private int test = 0;
 
     ArticlesManager(Activity activity) {
         this.notificationManager = new NotificationManager();
         this.adapter = new RecyclerViewAdapter(activity);
         this.horizontalRecyclerViewAdapter = new HorizontalRecyclerViewAdapter(activity);
     }
+
+    public static HashMap<String, Article> getArticleMap() { return articleMap;}
 
     public void update(String jsonData) {
         try {
@@ -31,17 +34,23 @@ public class ArticlesManager {
             for (int i = 0; i < articlesArray.length(); i++) {
                 Article currentArticle = new Article(articlesArray.getJSONObject(i));
                 //adding only new articles
-                if (titlesSet.add(currentArticle.getTitle())) {
+                if (!articleMap.containsKey(currentArticle.getId())) {
+                    articleMap.put(currentArticle.getId(), currentArticle);
                     adapter.addItemsToList(currentArticle);
-                    horizontalRecyclerViewAdapter.addItemsToList(currentArticle);
                     this.isUpdated++;
                 }
+
+                    Article testArticle = new Article();
+                    adapter.addItemsToList(testArticle);
+                    if (test == 1){
+                        isUpdated++;
+                    }
             }
             if (isUpdated > 0) {
                 notificationManager.displayNotification(isUpdated);
                 adapter.notifyDataSetChanged();
-                horizontalRecyclerViewAdapter.notifyDataSetChanged();
                 isUpdated = 0;
+                test++;
             }
         } catch (JSONException e) {
             e.printStackTrace();

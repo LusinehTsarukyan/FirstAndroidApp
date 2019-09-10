@@ -1,13 +1,10 @@
 package com.example.myfirstapp;
 
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
-import android.provider.Settings;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -39,7 +36,6 @@ public class NotificationManager extends AppCompatActivity {
                 builder.setContentTitle("New article available!");
             }
 
-            //todo
 //            This intent will be fired when the notification is tapped
 //            Intent intent = new Intent(ContexManager.getMainContext(), MainActivity.class);
 //            PendingIntent pendingIntent = PendingIntent.getActivity(ContexManager.getMainContext(), 1001, intent, 0);

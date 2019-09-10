@@ -6,16 +6,20 @@ import org.json.JSONObject;
 
 public class Article {
     private JSONObject jsonObject;
+    private String id;
     private String title;
     private String pillarName;
     private String img = "https://fbinstantarticles.files.wordpress.com/2016/05/screen_monetization_mobile.jpg";
     private String summary = null;
     private String apiURL;
+    static int test = 0;
 
     Article(JSONObject jsonObject) throws JSONException {
         this.jsonObject = jsonObject;
         this.title = jsonObject.getString("webTitle");
         this.pillarName = (String) jsonObject.get("pillarName");
+
+        id = jsonObject.getString("id");
 
         JSONObject blocks = jsonObject.getJSONObject("blocks");
         if (blocks.has("main")) {
@@ -33,6 +37,16 @@ public class Article {
         }
         this.apiURL = jsonObject.getString("apiUrl") + "?" + "&show-blocks=all&api-key=" + MainActivity.apiKey;
     }
+
+    public Article(){
+        this.id = "1";
+        this.summary = "Testing new article update.";
+        this.title = "Test!" + test;
+         test++;
+        this.img = "https://fbinstantarticles.files.wordpress.com/2016/05/screen_monetization_mobile.jpg";
+    }
+
+    public String getId() {return id;}
 
     public String getTitle() {
         return title;
@@ -79,7 +93,7 @@ public class Article {
             });
             thread.start();
             while (summary == null){
-                //do nothing wait //todo
+                //do nothing wait, not a good idea, thinking another way to solve this
             }
             return summary;
         }
