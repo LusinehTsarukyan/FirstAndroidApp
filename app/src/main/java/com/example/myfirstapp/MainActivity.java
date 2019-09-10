@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
                                       }
                                   },
-                0, 10000);   // 30000 Millisecond  = 30 second
+                0, 30000);   // 30000 Millisecond  = 30 second
 
         // set up the RecyclerView
         RecyclerView horizontalRecyclerView = findViewById(R.id.pinnedArticles);
