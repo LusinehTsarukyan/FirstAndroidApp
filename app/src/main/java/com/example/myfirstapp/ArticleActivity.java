@@ -40,7 +40,7 @@ public class ArticleActivity extends AppCompatActivity {
         summary.setText(mSummary);
 
         String id = intent.getStringExtra("id");
-        currentArticle = ArticlesManager.getArticleMap().get(id);
+        currentArticle = ArticlesManager.getArticleById(id);
     }
 
     public void addItemsToList(View view) {

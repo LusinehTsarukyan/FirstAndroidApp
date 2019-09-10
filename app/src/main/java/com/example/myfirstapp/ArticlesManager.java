@@ -23,7 +23,9 @@ public class ArticlesManager {
         this.horizontalRecyclerViewAdapter = new HorizontalRecyclerViewAdapter(activity);
     }
 
-    public static HashMap<String, Article> getArticleMap() { return articleMap;}
+    public static Article getArticleById(String id) {
+        return articleMap.get(id);
+    }
 
     public void update(String jsonData) {
         try {
