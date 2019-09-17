@@ -14,6 +14,13 @@ public class Article {
     private String apiURL;
 //    static int test = 0;
 
+    Article(){
+        this.title = "Title";
+        this.summary = "Summary";
+        this.img = null;
+        this.pillarName = "Category";
+    }
+
     Article(JSONObject jsonObject) throws JSONException {
         this.jsonObject = jsonObject;
         this.title = jsonObject.getString("webTitle");
@@ -46,7 +53,9 @@ public class Article {
 //        this.img = "https://fbinstantarticles.files.wordpress.com/2016/05/screen_monetization_mobile.jpg";
 //    }
 
-    public String getId() {return id;}
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
@@ -60,13 +69,12 @@ public class Article {
         return img;
     }
 
-    public String getSummary()
-    {
+    public String getSummary() {
         //getting summary only when article is clicked, not to save that huge string for all articles
         if (null != this.summary) {
             return summary;
-        }else {
-             Thread thread = new Thread(new Runnable() {
+        } else {
+            Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -76,15 +84,15 @@ public class Article {
                                 .getJSONObject("blocks")
                                 .getJSONArray("body")
                                 .getJSONObject(0);
-                        if(body.getString("bodyTextSummary").equals("")){
+                        if (body.getString("bodyTextSummary").equals("")) {
                             summary = title;
-                        }else {
+                        } else {
                             summary = body.getString("bodyTextSummary");
                         }
                         //only in one case, article doesn't have summary in json. Can be several solutions here.
                         System.out.println(getTitle() + " _____________ " + summary + " API: " + apiURL);
-                        if(summary == null){
-                            summary = title + "no summary?" ;
+                        if (summary == null) {
+                            summary = title + "no summary?";
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -92,10 +100,22 @@ public class Article {
                 }
             });
             thread.start();
-            while (summary == null){
+            while (summary == null) {
                 //do nothing wait, not a good idea, thinking another way to solve this
             }
             return summary;
         }
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }

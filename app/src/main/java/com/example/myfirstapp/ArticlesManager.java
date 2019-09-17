@@ -1,11 +1,17 @@
 package com.example.myfirstapp;
 
 import android.app.Activity;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 public class ArticlesManager {
@@ -15,6 +21,8 @@ public class ArticlesManager {
     public Integer isUpdated = 0;
     public RecyclerViewAdapter adapter;
     public static HorizontalRecyclerViewAdapter horizontalRecyclerViewAdapter;
+    public static boolean fileIsEmpty = true;
+
 //    private int test = 0;
 
     ArticlesManager(Activity activity) {
@@ -56,6 +64,41 @@ public class ArticlesManager {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void readFromFile(){
+        if (!fileIsEmpty){
+            Article savedArticle = new Article();
+
+            try {
+                InputStream inputStream = ContexManager.getMainContext()
+                        .openFileInput("titles.txt");
+
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString = "No saved articles.";
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    while ( (receiveString = bufferedReader.readLine()) != null ) {
+                        stringBuilder.append(receiveString);
+                    }
+
+                    inputStream.close();
+                    savedArticle.setTitle(stringBuilder.toString());
+                    savedArticle.setSummary("Summary");
+                    savedArticle.setImg(null);
+
+                    adapter.addItemsToList(savedArticle);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+            catch (FileNotFoundException e) {
+                Log.e("login activity", "File not found: " + e.toString());
+            } catch (IOException e) {
+                Log.e("login activity", "Can not read file: " + e.toString());
+            }
         }
     }
 }

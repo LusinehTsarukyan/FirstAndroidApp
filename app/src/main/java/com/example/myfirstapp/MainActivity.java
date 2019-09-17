@@ -7,13 +7,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,8 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
                                       @Override
                                       public void run() {
-                                          new RequestJsonTask(articlesManager).execute(urlString);
-
+                                          ConnectivityManager connectivityManager
+                                                  = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                                          NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                                          if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()){
+                                              articlesManager.readFromFile();
+                                          }else{
+                                              new RequestJsonTask(articlesManager).execute(urlString);
+                                          }
                                       }
                                   },
                 0, 30000);   // 30000 Millisecond  = 30 second
@@ -99,9 +122,20 @@ public class MainActivity extends AppCompatActivity {
                         (Activity) ContexManager.getMainContext(), imageView
                         , "img_transition");
                 startActivity(intent, option.toBundle());
+
+                try {
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(ContexManager.getMainContext()
+                            .openFileOutput("titles.txt", Context.MODE_PRIVATE));
+                    outputStreamWriter.write(article.getTitle());
+                    articlesManager.fileIsEmpty = false;
+                    outputStreamWriter.close();
+                }
+                catch (IOException e) {
+                    Log.e("Exception", "File write failed: " + e.toString());
+                }
             }
         });
-        recyclerView.setAdapter( articlesManager.adapter);
+        recyclerView.setAdapter(articlesManager.adapter);
     }
 }
 
