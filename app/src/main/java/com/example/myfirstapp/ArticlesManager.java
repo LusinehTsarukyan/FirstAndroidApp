@@ -12,7 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ArticlesManager {
     //using HashMap for fast lookup and part of solution of pinned articles view
@@ -22,13 +24,23 @@ public class ArticlesManager {
     public RecyclerViewAdapter adapter;
     public static HorizontalRecyclerViewAdapter horizontalRecyclerViewAdapter;
     public static boolean fileIsEmpty = true;
+    private Activity activity;
+    public List<String> savedArticlesTitles;
+    public List<String> savedArticlesCategories;
+    public List<String> savedArticlesSummaries;
+    public List<String> savedArticlesIDs;
 
 //    private int test = 0;
 
     ArticlesManager(Activity activity) {
+        this.activity = activity;
         this.notificationManager = new NotificationManager();
         this.adapter = new RecyclerViewAdapter(activity);
         this.horizontalRecyclerViewAdapter = new HorizontalRecyclerViewAdapter(activity);
+        this.savedArticlesTitles = new ArrayList<>();
+        this.savedArticlesIDs = new ArrayList<>();
+        this.savedArticlesCategories = new ArrayList<>();
+        this.savedArticlesSummaries = new ArrayList<>();
     }
 
     public static Article getArticleById(String id) {
@@ -64,41 +76,6 @@ public class ArticlesManager {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void readFromFile(){
-        if (!fileIsEmpty){
-            Article savedArticle = new Article();
-
-            try {
-                InputStream inputStream = ContexManager.getMainContext()
-                        .openFileInput("titles.txt");
-
-                if ( inputStream != null ) {
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    String receiveString = "No saved articles.";
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    while ( (receiveString = bufferedReader.readLine()) != null ) {
-                        stringBuilder.append(receiveString);
-                    }
-
-                    inputStream.close();
-                    savedArticle.setTitle(stringBuilder.toString());
-                    savedArticle.setSummary("Summary");
-                    savedArticle.setImg(null);
-
-                    adapter.addItemsToList(savedArticle);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-            catch (FileNotFoundException e) {
-                Log.e("login activity", "File not found: " + e.toString());
-            } catch (IOException e) {
-                Log.e("login activity", "Can not read file: " + e.toString());
-            }
         }
     }
 }

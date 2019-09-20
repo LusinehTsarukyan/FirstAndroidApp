@@ -118,4 +118,12 @@ public class Article {
     public void setImg(String img) {
         this.img = img;
     }
+
+    public void setPillarName(String pillarName) {
+        this.pillarName = pillarName;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

@@ -25,25 +25,34 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.example.myfirstapp.ArticlesManager.fileIsEmpty;
+
 public class MainActivity extends AppCompatActivity {
     public static ArticlesManager articlesManager = null;
     public static final String apiKey = "6cb66347-dd59-4b6c-be55-731200528471";
     private ContexManager contexManager;
+    private RecyclerView verticalRecyclerView;
+    private RecyclerView horizontalRecyclerView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -58,9 +67,14 @@ public class MainActivity extends AppCompatActivity {
                                           ConnectivityManager connectivityManager
                                                   = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                                           NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-                                          if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()){
-                                              articlesManager.readFromFile();
-                                          }else{
+                                          if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
+                                              readFromFile();
+                                              runOnUiThread(new Runnable() {
+                                                  public void run() {
+                                                      articlesManager.adapter.notifyDataSetChanged();
+                                                  }
+                                              });
+                                          } else {
                                               new RequestJsonTask(articlesManager).execute(urlString);
                                           }
                                       }
@@ -68,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 0, 30000);   // 30000 Millisecond  = 30 second
 
         // set up the RecyclerView
-        RecyclerView horizontalRecyclerView = findViewById(R.id.pinnedArticles);
+        horizontalRecyclerView = findViewById(R.id.pinnedArticles);
         LinearLayoutManager horizontalLinearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false);
         horizontalRecyclerView.setLayoutManager(horizontalLinearLayoutManager);
@@ -92,12 +106,12 @@ public class MainActivity extends AppCompatActivity {
         horizontalRecyclerView.setAdapter(articlesManager.horizontalRecyclerViewAdapter);
 
 
-        RecyclerView recyclerView = findViewById(R.id.articles);
+        verticalRecyclerView = findViewById(R.id.articles);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        verticalRecyclerView.setLayoutManager(linearLayoutManager);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        verticalRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -123,19 +137,67 @@ public class MainActivity extends AppCompatActivity {
                         , "img_transition");
                 startActivity(intent, option.toBundle());
 
-                try {
-                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(ContexManager.getMainContext()
-                            .openFileOutput("titles.txt", Context.MODE_PRIVATE));
-                    outputStreamWriter.write(article.getTitle());
-                    articlesManager.fileIsEmpty = false;
-                    outputStreamWriter.close();
-                }
-                catch (IOException e) {
-                    Log.e("Exception", "File write failed: " + e.toString());
+                //writing in a file to see articles offline
+                if (!articlesManager.savedArticlesIDs.contains(article.getId())) {
+                    articlesManager.savedArticlesTitles.add(article.getTitle());
+                    articlesManager.savedArticlesCategories.add(article.getPillarName());
+                    articlesManager.savedArticlesSummaries.add(article.getSummary());
+                    articlesManager.savedArticlesIDs.add(article.getId());
+
+                    saveArrayList(articlesManager.savedArticlesTitles, "titles.txt");
+                    saveArrayList(articlesManager.savedArticlesCategories, "categories.txt");
+                    saveArrayList(articlesManager.savedArticlesSummaries, "summaries.txt");
+                    saveArrayList(articlesManager.savedArticlesIDs, "id.txt");
                 }
             }
         });
-        recyclerView.setAdapter(articlesManager.adapter);
+        verticalRecyclerView.setAdapter(articlesManager.adapter);
+    }
+
+    public void saveArrayList(List<String> arrayList, String filename) {
+        try {
+            FileOutputStream fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
+            out.writeObject(arrayList);
+            out.close();
+            fileOutputStream.close();
+            articlesManager.fileIsEmpty = false;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<String> getSavedArrayList(String filename) {
+        ArrayList<String> savedArrayList = null;
+
+        try {
+            FileInputStream inputStream = openFileInput(filename);
+            ObjectInputStream in = new ObjectInputStream(inputStream);
+            savedArrayList = (ArrayList<String>) in.readObject();
+            in.close();
+            inputStream.close();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return savedArrayList;
+    }
+
+
+    public void readFromFile() {
+        if (!articlesManager.fileIsEmpty) {
+            articlesManager.adapter.articleList.clear();
+            for (int i = 0; i < articlesManager.savedArticlesTitles.size(); ++i) {
+                Article savedArticle = new Article();
+                savedArticle.setTitle(getSavedArrayList("titles.txt").get(i));
+                savedArticle.setPillarName(getSavedArrayList("categories.txt").get(i));
+                savedArticle.setSummary(getSavedArrayList("summaries.txt").get(i));
+                savedArticle.setId(getSavedArrayList("id.txt").get(i));
+                savedArticle.setImg(null);
+                articlesManager.adapter.addItemsToList(savedArticle);
+            }
+        }
     }
 }
 
